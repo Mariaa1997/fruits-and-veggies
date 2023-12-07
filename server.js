@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const fruits = require('./models/fruits.js');
+const vegetables = require('./models/vegetables.js')
 const jsxViewEngine = require('jsx-view-engine');
 
 app.set('view engine', 'jsx');
@@ -52,7 +53,7 @@ app.use(express.urlencoded({extended:false}));
 // S - Show     GET         READ - display a specific element
 
 app.get('/', (req, res) => {
-    res.send('this is my fruits root route');
+    res.send('this is my FRUITS and VEGETABLES root route');
 });
 
 // I - INDEX - dsiplays a list of all fruits
@@ -61,12 +62,16 @@ app.get('/fruits/', (req, res) => {
     res.render('Index', {fruits: fruits});
 });
 
-
+app.get('/vegetables/' , (req, res) => {
+    res.render('Index', {vegetables: vegetables});
+});
 // N - NEW - allows a user to input a new fruit
 app.get('/fruits/new', (req, res) => {
     res.render('New');
 });
-
+app.get('/vegetables/new', (req, res) => {
+    res.render('New');
+});
 
 // C - CREATE - update our data store
 app.post('/fruits', (req, res) => {
@@ -81,15 +86,36 @@ app.post('/fruits', (req, res) => {
     // res.send('data received');
     res.redirect('/fruits'); // send user back to /fruits
 })
+app.post('/vegetables', (req, res) => {
+    if(req.body.readyToEat === 'on') { //if checked, req.body.readyToEat is set to 'on'
+        req.body.readyToEat = true;
+    } else {  //if not checked, req.body.readyToEat is undefined
+        req.body.readyToEat = false;
+    }
+    vegetables.push(req.body);
+    // console.log(fruits);
+    // console.log(req.body)
+    // res.send('data received');
+    res.redirect('/vegetables'); // send user back to /fruits
+})
 
+app.post('/fruit')
 // S - SHOW - show route displays details of an individual fruit
 app.get('/fruits/:indexOfFruitsArray', (req, res) => {
     // res.send(fruits[req.params.indexOfFruitsArray]);
-    res.render('Show', {// second parameter must be an object
+    res.render('fruits/Show', {// second parameter must be an object
         fruit: fruits[req.params.indexOfFruitsArray]
     });
 })
+app.post('/vegetables')
+// S - SHOW - show route displays details of an individual fruit
+app.get('/vegetables/:indexOfVegetablesArray', (req, res) => {
+    // res.send(fruits[req.params.indexOfFruitsArray]);
+    res.render('vegetables/Show', {// second parameter must be an object
+        vegetable: vegetables[req.params.indexOfVegetablesArray]
+    });
+})
 
-app.listen(3000, () => {
+app.listen(3001, () => {
     console.log('listening');
 });
